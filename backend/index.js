@@ -197,17 +197,40 @@ app.get("/allPositions", async (req, res) => {
   res.json(allPositions);
 });
 
+// app.post("/newOrder", async (req, res) => {
+//   let newOrder = new OrdersModel({
+//     name: req.body.name,
+//     qty: req.body.qty,
+//     price: req.body.price,
+//     mode: req.body.mode,
+//   });
+
+//   newOrder.save();
+
+//   res.send("Order saved!");
+// });
+
 app.post("/newOrder", async (req, res) => {
-  let newOrder = new OrdersModel({
-    name: req.body.name,
-    qty: req.body.qty,
-    price: req.body.price,
-    mode: req.body.mode,
-  });
+  try {
+    const newOrder = new OrdersModel({
+      name: req.body.name,
+      qty: req.body.qty,
+      price: req.body.price,
+      mode: req.body.mode,
+    });
 
-  newOrder.save();
+    await newOrder.save();
 
-  res.send("Order saved!");
+    res.status(201).json({
+      message: "Order saved successfully!",
+      order: newOrder,
+    });
+  } catch (error) {
+    console.error("Error saving order:", error);
+    res.status(500).json({
+      message: "Failed to save order",
+    });
+  }
 });
 
 app.listen(PORT, () => {
